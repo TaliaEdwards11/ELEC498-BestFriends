@@ -118,7 +118,7 @@
 
       <label for="type">Dog Type: </label>
         <select id="type" name="type">
-          <option value="Bulldogs">Bulldogs</option>
+          <option value="Bulldog">Bulldog</option>
           <option value="Pug">Pug</option>
           <option value="Pekingese">Pekingese</option>
           <option value="Saint Bernards">Saint Bernards</option>
@@ -126,16 +126,33 @@
           <option value="Mastiffs">Masstifs</option>
           <option value="Boxers">Boxers</option>
           <option value="Doberman Pinschers">Doberman Pinschers</option>
+          <option value="Chihuahuas">Chihuahuas</option>
+          <option value="Maltese">Maltese</option>
+          <option value="Dachsund">Dachsund</option>
+          <option value="Pomeranian">Pomeranian</option>
+          <option value="Pug">Pug</option>
+          <option value="Boston Terrier">Boston Terrier</option>
+          <option value="Shih Tzu">Shih Tzu</option>
+          <option value="Yorkshire Terrier">Yorkshire Terrier</option>
+          <option value="Golden Retriever">Golden Retriever</option>
+            <option value="Dalmation">Dalmation</option>
+            <option value="Pitbull">Pitbull</option>
+            <option value="Border Collie">Border Collie</option>
+            <option value="Bernese Mountain Dog">Bernese Mountain Dog</option>
+            <option value="Samoyed">Samoyed</option>
+            <option value="Alaskan Malamute">Alaskan Malamute</option>
+            <option value="German Shepard">German Shepard</option>
+            <option value="Irish Woldhound">Irish Woldhound</option>
           <option value="Other">Other</option>
         </select><br><br>
 
       <label for="size">Dog Size:</label>
         <select id="size" name="size">
-          <option value="Extra Small">Extra Small</option>
+       
           <option value="Small">Small</option>
-          <option value="Medium">Medium</option>
+         
           <option value="Large">Large</option>
-          <option value="Extra Large">Extra Large</option>
+         
         </select><br><br>
 
       <label for="age">Age:</label>
