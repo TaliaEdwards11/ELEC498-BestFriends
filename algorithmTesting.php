@@ -1,41 +1,7 @@
 <?php
-// quick sort -- calls partition function 
-// split heartbeats based on partition similar to isolation forest
-// recursive function
-function quicksort(&$Array, $left, $right) {
-  if ($left < $right) { 
-    $pivot = partition($Array, $left, $right);
-    quicksort($Array, $left, $pivot-1);
-    quicksort($Array, $pivot+1, $right);
-  }
-}
 
-function partition(&$Array, $left, $right) {
-  $i = $left;
-  $pivot = $Array[$right];
-  for($j = $left; $j <=$right; $j++) {
-    if($Array[$j] < $pivot) {
-      $temp = $Array[$i];
-      $Array[$i] = $Array[$j];
-      $Array[$j] = $temp;
-      $i++;
-    }
-  }
 
-  $temp = $Array[$right];
-  $Array[$right] = $Array[$i];
-  $Array[$i] = $temp;
-  return $i;
-}
-
-// function to print array
-function PrintArray($Array, $n) { 
-  for ($i = 0; $i < $n; $i++) 
-    echo $Array[$i]." "; 
-  echo "\n";
-} 
-
-# algorithm will update based on users input of abnormality flags being true or false which affects the sensisitivity
+// algorithm will update based on users input of abnormality flags being true or false which affects the sensisitivity
 function getAbnormalities($MyArray, $n, $MyTimeArray, $sensitivity, $dogWeight, $dogBreed, $age, $sizeDog, $stepCount){
         
     // depending on dog size (big or small), the bpm hearbeats will be in different ranges
