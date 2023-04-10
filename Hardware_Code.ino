@@ -187,7 +187,7 @@ Wire.beginTransmission(MPU_ADDR);
 }
 
 
-//Final readings of results
+//BMP180 readings of results
 if(millis() - reading_captured_now > 500){
     float temp = bmp.readTemperature();
     float pressure = bmp.readPressure();
