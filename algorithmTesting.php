@@ -1,6 +1,3 @@
-<head>
-        <link rel="stylesheet" href="static/content/site.css">
-</head>
 <?php
 // quick sort -- calls partition function 
 // split heartbeats based on partition similar to isolation forest
@@ -35,131 +32,238 @@ function partition(&$Array, $left, $right) {
 function PrintArray($Array, $n) { 
   for ($i = 0; $i < $n; $i++) 
     echo $Array[$i]." "; 
-  echo "<br>";
+  echo "\n";
 } 
 
-function getAbnormalities($MyArray, $n, $MyTimeArray, $minValue, $maxValue, $sensitivity, $dogSize, $dogBreed, $existingCondition){
-    echo "Statistics: <br>";
-    echo "Maximum heartbeat recorded to be: ";
-    echo $MyArray[$n-1]." ";
-    echo "<br>";
-    if ($MyArray[$n-1] > 180){
-        echo "Check for Sinus Tachycardia with vet provider. ";
-    }
-    echo "Minimum heartbeat recorded to be: ";
-    echo $MyArray[0]." ";
-    echo "<br>";
-    echo "With a sensitivity of ";
-    echo $sensitivity;
-    echo "<br>";
-    echo "List of heartbeat bpm readings:";
-    
-    
+# algorithm will update based on users input of abnormality flags being true or false which affects the sensisitivity
+function getAbnormalities($MyArray, $n, $MyTimeArray, $sensitivity, $dogWeight, $dogBreed, $age, $sizeDog, $stepCount){
+        
     // depending on dog size (big or small), the bpm hearbeats will be in different ranges
     // range is 120 - 160 for small dogs
-    
     // range is 60 - 120 for large dogs
-    
 
+    // CHECK HEARTBEAT INPUT -- can be commented out
+    // echo "list of hearbeats recorded: "
+    // for ($i = 0; $i < $n; $i++){
+    // echo $MyArray[$i]." "; 
+    // //echo "\n";
+    // }
     
-    for ($i = 0; $i < $n; $i++){
-        echo $MyArray[$i]." "; 
-        //echo "<br>";
-    }
-    echo "<br>";
-    echo "\nList of corresponding time readings: ";
-    for ($i = 0; $i < $n; $i++){
-        echo $MyTimeArray[$i]." "; 
-        //echo "<br>";
-    }
-    
-    // check if greater than 100 bpm and depending on sensitivity range
-    // if higher than should be. For example, the higher the sensitivity
-    // rating, bpm of 115 are ok but not ok with a sensitivity of 1
-    foreach($MyArray as $key=>$e){
+    // echo "\nList of corresponding time readings: ";
+    // for ($i = 0; $i < $n; $i++){
+    //     echo $MyTimeArray[$i]." "; 
+    //     //echo "\n";
+    // }
+
+    if ($dogBreed == "Bulldog" || $dogBreed == "Chihuahuas" || $dogBreed == "Maltese" || $dogBreed == "Dachsund" || $dogBreed == "Pomeranian" || $dogBreed == "Pug" || $dogBreed == "Boston Terrier" || $dogBreed == "Shih Tzu" || $dogBreed == "Yorkshire Terrier" || $sizeDog == "Small" ){
+       
+        // depending on breed set minimum and maximum bpm value
+        $minValue = 120;
+        $maxValue = 160;
+        $count = 0;
+        
+        
+
+        // check if greater than 160 bpm and depending on sensitivity range
+        // if higher than should be. For example, the higher the sensitivity
+        // rating, bpm of 155 are ok but not ok with a sensitivity of 1
+        $results = array();
+  
+        foreach($MyArray as $key=>$e){
             $i = 0;
-            $difference = $e - 100;
-            $sensitivity = $sensitivity * 0.5;
+            if($stepCount[$key] < 15 ){
+
+            $difference = $e - $maxValue;
+            
             //echo $difference;
             //echo $sensitivity;
-            if($e>$maxValue && $difference > $sensitivity){
-                echo "\nAbnormality detected, specifically the bmp rate of : ";
-                echo $e; 
-                echo " and time reading of : ";
-                echo $MyTimeArray[$key];
-                echo "\nThis is a fast heartbeat. Advise to check in with Vet if high reading continues";
+            
+            $threshold = 30;
+           
+            if($e>$maxValue && $difference > $threshold/$sensitivity){
+               
+                
+                    $str = "Abnormality detected, specifically the high bmp rate of : ".$e. " at time reading of : ".$MyTimeArray[$key]."";
+                    array_push($results, $str);
+
+                
+            }
+
             }
         }
-        echo "<br>";
         
-    // check if lower than 100 bpm and depending on sensitivity range
-    // if lower than should be. For example, the higher the sensitivity
-    // rating, bpm of 45 are ok but not ok with a sensitivity of 1
-    foreach($MyArray as $key=>$in){
-            $difference = 60 - $in;
-            $sensitivity = $sensitivity * 0.5;
+        
+    
+        
+        // check if lower than 120 bpm and depending on sensitivity range
+        // if lower than should be. For example, the higher the sensitivity
+        // rating, bpm of 45 are ok but not ok with a sensitivity of 1
+     
+        foreach($MyArray as $key=>$in){
+                $difference = $minValue - $in;
+                
+                //echo $difference;
+                //echo $sensitivity;
+                if($in<$minValue && $difference > $threshold/$sensitivity){
+                   
+                 
+                        $str = "Abnormality detected, specifically the low bmp rate of : ".$in. " at time reading of : " .$MyTimeArray[$key]."";
+                        array_push($results, $str);
+                    
+                    
+                }
+            }
+        }
+
+
+    if ($dogBreed == "Golden Retriever" || $dogBreed == "Dalmation" || $dogBreed == "Pitbull" || $dogBreed == "Border Collie" || $dogBreed == "Bernese Mountain Dog" || $dogBreed == "Samoyed" || $dogBreed == "Alaskan Malamute" || $dogBreed == "German Shepard" || $dogBreed == "Irish Woldhound" || $sizeDog == "Large" ){
+
+        // depending on breed set minimum and maximum bpm value
+        $minValue = 60;
+        $maxValue = 120;
+        $count = 0;
+        
+        
+
+        // check if greater than 160 bpm and depending on sensitivity range
+        // if higher than should be. For example, the higher the sensitivity
+        // rating, bpm of 155 are ok but not ok with a sensitivity of 1
+   
+        foreach($MyArray as $key=>$e){
+            $i = 0;
+            if($stepCount[$key] < 15 ){
+
+            $difference = $e - $maxValue;
+            
             //echo $difference;
             //echo $sensitivity;
-            if($in<$minValue && $sensitivity < $difference){
-                echo "Abnormality detected, specifically the bmp rate of : ";
-                echo $in; 
-                echo " and time reading of : ";
-                echo $MyTimeArray[$key];
-                echo "<br>";
+            
+            $threshold = 30;
+           
+            if($e>$maxValue && $difference > $threshold/$sensitivity){
+               
+                
+                    $str = "Abnormality detected, specifically the high bmp rate of : ".$e." at time reading of : "+ $MyTimeArray[$key];
+                    array_push($results, $str);
+
+                
+            }
+
             }
         }
-}
-
-function temperatureCheck($MyTimeArray, $n, $tempMinLimit, $tempMaxLimit){
-        // maximum temperature is 104
-        // minimum temperature is 99
         
-        foreach($MyTimeArray as $key=>$e){
-            if($e>$tempMaxLimit||$e<$tempMinLimit){
-                echo "Temperature readings are concerning\n";
+        
+    
+        
+        // check if lower than 120 bpm and depending on sensitivity range
+        // if lower than should be. For example, the higher the sensitivity
+        // rating, bpm of 45 are ok but not ok with a sensitivity of 1
+     
+        foreach($MyArray as $key=>$in){
+                $difference = $minValue - $in;
+                
+                //echo $difference;
+                //echo $sensitivity;
+                if($in<$minValue && $difference > $threshold/$sensitivity){
+                   
+                 
+                        $str = "Abnormality detected, specifically the bmp rate of : ".$in." at time reading of : "+ $MyTimeArray[$key];
+                        array_push($results, $str);
+                    
+                    
+                }
             }
-
         }
-    echo "Normal internal temperature readings";
+        return $results;
+}
+
+function temperatureCheck($sensitivity, $MyTimeArray, $Temp){
+        // maximum temperature is 39.2
+        // minimum temperature is 38.3
+
+    $tempMinLimit = 38.3;
+    $tempMaxLimit = 39.2;
+    $results = array();
+        $count = 0;
+        foreach($Temp as $e){
+            if(floatval($e)>$tempMaxLimit+ 3/$sensitivity){
+                $str = "Your pet appears to have an elevated temperature of: " .$e. " at time "  .$MyTimeArray[$count]."";
+                array_push($results, $str);
+              
+            } elseif(floatval($e)<$tempMinLimit- 3/$sensitivity){
+                $str = "Your pet appears to have a low temperature of: " .$e. " at time "  .$MyTimeArray[$count]."";
+                array_push($results, $str);
+            
+            }
+            $count = $count+1;
+    }
+    return $results;
+
 }
 
 
-function healthIssueCheck($dogBreed, $weight, $age){
+function checkExistingHealthConcerns( $weight, $age, $MyArray){
+    $count = 0;
     // small puppies 220 bpm identify Sinus Tachycardia
+    if ($weight < 15 &&  $age < 1){
+        
+            foreach($MyArray as $heart){
+                if($heart > 220){
+                    $count = $count + 1;
+                }
+            }
+      
+        
+    }
+    // standard dogs 160 bpm identify Sinus Tachycardia
+   
+    if ($weight > 15  && $age > 1){
+        
+            foreach($MyArray as $heart){
+                if($heart > 160){
+                    $count = $count + 1;
+                }
+            }
+        
+        
+        }
     
-    // small dogs 180 bpm identify Sinus Tachycardia
-    
-    // standard size 160 bpm identify Sinus Tachycardia
-    
-    // giant breeds 140 bpm 
+      if($count >0){
+            return "Flagged: Possibility for Sinus Tachycardia with vet provider. High heartrates appeared " .$count. " times.";
+        }
+
 }
 
-function checkStepsPerMin($stepCount, $petName){
-    // check if step count in 1 minute is high (means they are exercising)
-    for ($i = 0; $i > $n; $i++){
-        echo $MyTimeArray[$i]." "; 
-        echo $petName;
-        echo "\n Seems to be going for a walk";
+function checkWeightConcerns($dogBreed, $size, $weight, $age){
+    $flagWeight = False;
+    if ($dogBreed == "Bulldog" || $dogBreed == "Chihuahuas" || $dogBreed == "Maltese" || $dogBreed == "Dachsund" || $dogBreed == "Pomeranian" || $dogBreed == "Pug" || $dogBreed == "Boston Terrier" || $dogBreed == "Shih Tzu" || $dogBreed == "Yorkshire Terrier" || $size == "Small"){
+        if ($weight > 40 && $age >1){
+            $flagWeight = True;
+            return "Warning: Weight of pet could possibly be too high for their age and breed";
+        }
+
+        if ($weight < 15 && $age >1){
+            $flagWeight = True;
+            return "Warning: Weight of pet could possibly be too low";
+        }
+
     }
 
+
+    if ($dogBreed == "Golden Retriever" || $dogBreed == "Dalmation" || $dogBreed == "Pitbull" || $dogBreed == "Border Collie" || $dogBreed == "Bernese Mountain Dog" || $dogBreed == "Samoyed" || $dogBreed == "Alaskan Malamute" || $dogBreed == "German Shepard" || $dogBreed == "Irish Woldhound" || $size == "Large"){
+        if ($weight > 65 && $age >1){
+            $flagWeight = True;
+            return "Warning: Weight of pet could possibly be too high for their age and breed";
+        }
+
+        if ($weight < 33 && $age >1){
+            $flagWeight = True;
+            return "Warning: Weight of pet could possibly be too low";
+        }
+
+    }
 }
 
-// test the code
-$MyArray = array(50.02,45.00,60.00,70.00, 55.00);
-$MyTimeArray = array(18.05,18.06,18.07,18.08,18.08);
-$MyTemperatureArray = array(70, 70.1, 70.3, 72, 71, 71.7, 70.6);
-$n = sizeof($MyArray); 
-echo "Original Heartbeat Array\n";
-PrintArray($MyArray, $n);
 
-quicksort($MyArray, 0, $n-1);
-echo "\nSorted Heartbeat Array\n";
-PrintArray($MyArray, $n);
-
-echo "\nAbnormality Detection: \n";
-getAbnormalities($MyArray, $n, $MyTimeArray, 60, 100, 3, 30, "Doguino", "Obesity");
-
-$MyTemperatureArray = array(38.3,38.4,38.3);
-temperatureCheck($MyTemperatureArray,3, 38.2,40.2);
 
 ?>

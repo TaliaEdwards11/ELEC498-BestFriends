@@ -2,7 +2,7 @@
 <html>
 <head>
 	    <meta charset="UTF-8">
-    <title>Monitoring</title>
+    <title>Dog Registration Form</title>
     <link rel="stylesheet" href="static/content/site.css">
 
     <style>
@@ -16,7 +16,7 @@
         display: inline-block;
         font-size: 20px;
         margin: 10px 30px;
-        cursor: pointer;o>
+        cursor: pointer;>
       }
 
       #myChart {
@@ -32,21 +32,60 @@
 	 <?php 
     session_start();
     include("connection.php");
+    include("algorithmTesting.php");
 ?>
+      <div>
+      <img src="static/content/logo.png" style="width: 200px; height: 180px;">
+      <button1 class="button" 
+            onclick="window.location.href = '/welcome.php';">
+            Home
+        </button1>
+        <button2 class="button" 
+            onclick="window.location.href = '/dogRegister.php';">
+            Pet Registration 
+        </button2>
+        <button3 class="button" 
+            onclick="window.location.href = '/monitoring.php';">
+            Monitoring
+        </button3>
+    </div>
 
-    <?php
-    if (isset($_POST['algorithm'])){
-
-    $user = 
-    $sensitivity = 
-    $output = shell_exec("myscript.py '$user' '$dog' '$sensitivity' ");
-    
-    }
-    ?>
+  
 	<?php
+    if(isset($_POST['UpdateSensitivity'])){
+        if(isset($_POST['index'])){
+            $index = $_POST['index'];
+        } else{
+            $index = array();
+        }
+        $sensitivity = floatval($_SESSION['sensitivity']);
+        // count number of false detections and update sensitivity
+        $falseDetections = count($index);
+        // no false detection and user pressed update sensitivity
+        // make more sensitive 
+        if (  $falseDetections == 0){
+                 $newSensitivity  =  $sensitivity + 0.2;
+        } // be only a little bit more sensitive is more sensitive 
+        elseif ($falseDetections > 5){
+                $newSensitivity  = $sensitivity - 0.5;
+        }
+        elseif ( $falseDetections < 5  ){
+                 $newSensitivity = $sensitivity - 0.2;
+        }
+        if($newSensitivity <0.5){
+            //set to lowest sensitivity of 0.5
+            $newSensitivity = 0.5; 
+        }
+        $message= 'The chosen dog ' .$_SESSION['dog'].' has an updated sensitivity from '. $sensitivity. ' to '.$newSensitivity.'';
+        $good=1;
+        $result = $db->query('UPDATE Dog SET  Sensitivity = '.$newSensitivity.' WHERE Name = "'.$_SESSION['dog'].'" and  Owner_Username = "'.$_SESSION['username'].'"');
+            
+        
+        
+    }
 	if(isset($_POST['dog_btn'])){
             $dog=  $_POST['dog'];
-
+            $_SESSION['dog'] = $dog;
             if( $dog!=""){
                
                     $count=0;
@@ -135,21 +174,71 @@
                     if(count($heartRate) == 0 && count($steps) == 0 && count($temp) == 0 && count($audio) ==0){
                         $message= 'The chosen dog is ' .$dog.' has no data. ';
                         $good=0;
+                        
                     }
                     else{
+                        
                         $message= 'The chosen dog is ' .$dog.'';
                         $good=1;
 
                         $result = $db->query('select Name, Dog_Type, Dog_Size, Age, Weight, Sensitivity, Address, Owner_Username from Dog WHERE Name = "' . $dog . '" and  Owner_Username = "'.$_SESSION['username'].'"');
                         $count=0;
-                         // check if pet already exists 
+                 
                         while ($row = $result->fetch()) {
-                            $sensitivity = $row["sensitivity"];
+                            $sensitivity = floatval($row["Sensitivity"]);
+                            $dogWeight = (int)$row["Weight"];
+                            $age = (int)$row["Age"];
+                            $size = $row["Dog_Size"];
+                            $type = $row["Dog_Type"];
                         }
-
-                        $message= 'The chosen dog ' .$dog.'. ';
-                        //$message2= 'No abnormalities detected :)';
-                        $good2 = 1;
+                    $_SESSION['sensitivity'] = $sensitivity;
+                        
+                        
+                       $resultHeart= getAbnormalities($heartRate, count($heartRate), $time, $sensitivity, $dogWeight, $type, $age, $size, $steps);
+                        
+                        $resultTemp = temperatureCheck($sensitivity, $time3, $temp);
+                        if(count($resultTemp) ==0 && count($resultHeart)==0){
+                            $message2= 'No abnormalities detected :)';
+                            $good2 = 1;
+                        }else{
+                           
+                            echo '<form name="abnormalities" method="post" style="margin-top: 20px;">';
+		                   echo '<table border="0" cellpadding="10" cellspacing="1" width="300" align="center">';
+                            echo '<div class="fail" id="fail" style="width:70%; margin:0 auto; margin-top:50px;" >';
+                            $results = array_merge($resultTemp, $resultHeart);
+                            $count = 0;
+                                 echo '<label style="color:black;"> Select all abnormalities that should be ignored and press update sensitivity. Note if update sensitivity is pressed with no selection, the sensitivity will be raised.</label><br>';
+                            foreach ($results as $line) {
+                               
+                                echo '<input type="checkbox" name="index[]" value="'.$count.'">';
+                                echo '<label for="vehicle1"> '.$line.'</label><br>';
+                                 $count = $count +1 ; 
+                                
+                              
+                            }
+                             echo '</div>';
+                            
+			               echo '<tr >';
+			      echo '<td align="center" colspan="2" class="tableBtn" > <input class="blueBtn" type="submit" name="UpdateSensitivity" value="Update Sensitivity"></td>';
+			    echo '</tr>';
+                             echo '</table>';
+                            echo '</form>';
+                            
+                        }
+                        
+                        
+                        $messageW = checkWeightConcerns($type, $size, $dogWeight, $age);  
+         
+                        if($messageW){
+                        echo '<div class="warning" id="warning" style="width:70%; margin:0 auto; margin-top:50px;" >'.$messageW.'</div>';}
+                        
+                     
+                         $messageE = checkExistingHealthConcerns($dogWeight, $age, $heartRate); 
+             
+                        if($messageE){
+                        echo '<div class="warning" id="warning" style="width:70%; margin:0 auto; margin-top:50px;" >'.$messageE.'</div>';}
+                        
+                        
 
                     } 
 
@@ -159,21 +248,7 @@
 ?>
 
 	
-  <div>
-      <img src="static/content/logo.png" style="width: 200px; height: 180px;">
-      <button1 class="button" 
-            onclick="window.location.href = '/welcome.php';">
-            Home
-        </button1>
-        <button2 class="button" 
-            onclick="window.location.href = '/dogRegister.php';">
-            Pet Registration 
-        </button2>
-        <button3 class="button" 
-            onclick="window.location.href = '/monitoring.php';">
-            Monitoring
-        </button3>
-    </div>
+
 
 	<h1>Monitoring</h1>
 	<?php
@@ -217,17 +292,10 @@
     
 	?>
 
-    <?php 
-    echo '<br></br>';
-    echo '<br></br>';
-    include("algorithmTesting.php");
-    ?>
-
 
     <?php
     if (count($heartRate)>0){
     echo '<h3 style="color: #000000"> Heart Rate Monitoring </h3>';
-
     echo '<table>';
         echo '<thead>';
             echo '<tr>';
@@ -250,16 +318,13 @@
         echo '<canvas id="myChart" width="600" height="200"></canvas>';
 
     }
-    ?>
-
-    <?php
     if(count($steps)>0){
 
         echo '<br></br>';
         echo '<br></br>';
         echo '<br></br>';
-
     echo '<h3 style="color: #ff6347"> Steps Monitoring </h3>';
+
 
         echo '<table>';
         echo '<thead>';
@@ -279,8 +344,7 @@
             }
         echo '</tbody>';
     echo '</table>';
-
-            echo '<canvas id="myChart2" width="600" height="200"></canvas>';
+    echo '<canvas id="myChart2" width="600" height="200"></canvas>';
 
     }
 
@@ -342,7 +406,6 @@
         echo '<canvas id="myChart4" width="600" height="200"></canvas>';
     }
     ?>
-    
 
 
 	<script>

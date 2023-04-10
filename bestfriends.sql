@@ -18,7 +18,7 @@ create table Dog(
 	Dog_Size	varchar(20) not null,
 	Age	int not null,
 	Weight	int not null,
-	Sensitivity	int not null,
+	Sensitivity	Decimal(2,1) not null,
 	Address		varchar(50) not null,
 	Owner_Username	char(100) not null,
 	primary key(Owner_Username, Name),
@@ -75,22 +75,21 @@ create table Audio(
 
 
 
-
-
 insert into Owner values
 ('Billy123','Pa$$worb','Brady','Billy')
 ;
 
 
 insert into Dog values
-('Doguino','Border Colis','Medium', 5, 40, 3, '216 Colborne Street, Kingston ON, K7K1E3', 'Billy123')
+('Doguino','Other','Small', 5, 70, 2.5, '216 Colborne Street, Kingston ON, K7K1E3', 'Billy123'),
+('DoguiA','Other','Large', 5, 40, 2, '216 Colborne Street, Kingston ON, K7K1E3', 'Billy123')
 ;
 
 insert into Heart_Rate values
 ('2023-01-08', '18:05:00', 50.02, 'Doguino', 'Billy123'),
 ('2023-01-08', '18:06:00', 45, 'Doguino', 'Billy123'),
-('2023-01-08', '18:07:00', 60, 'Doguino', 'Billy123'),
-('2023-01-08', '18:08:00', 70, 'Doguino', 'Billy123'),
+('2023-01-08', '18:07:00', 221, 'Doguino', 'Billy123'),
+('2023-01-08', '18:08:00', 222, 'Doguino', 'Billy123'),
 ('2023-01-08', '18:09:00', 55, 'Doguino', 'Billy123')
 ;
 
@@ -103,7 +102,7 @@ insert into Steps values
 ;
 
 insert into Temperature values
-('2023-01-08', '18:05:00', 38.2, 'Doguino', 'Billy123'),
+('2023-01-08', '18:05:00', 35, 'Doguino', 'Billy123'),
 ('2023-01-08', '18:06:00', 38.4, 'Doguino', 'Billy123'),
 ('2023-01-08', '18:07:00', 38.3, 'Doguino', 'Billy123'),
 ('2023-01-08', '18:08:00', 38.3, 'Doguino', 'Billy123'),
