@@ -181,12 +181,34 @@ function checkExistingHealthConcerns( $weight, $age, $MyArray){
       
         
     }
-    // standard dogs 160 bpm identify Sinus Tachycardia
-   
-    if ($weight > 15  && $age > 1){
+    // small dogs 180 bpm identify Sinus Tachycardia
+     if ($weight > 15 && $weight < 30 && $age > 1){
+        
+            foreach($MyArray as $heart){
+                if($heart > 180){
+                    $count = $count + 1;
+                }
+            }
+      
+        
+    }
+    // standard size 160 bpm identify Sinus Tachycardia
+     if ($weight > 30 && $weight < 55 && $age > 1){
         
             foreach($MyArray as $heart){
                 if($heart > 160){
+                    $count = $count + 1;
+                }
+            }
+      
+        
+    }
+    
+    // giant breeds 140 bpm 
+    if ($weight > 55 && $weight < 70 && $age > 1){
+        
+            foreach($MyArray as $heart){
+                if($heart > 140){
                     $count = $count + 1;
                 }
             }
